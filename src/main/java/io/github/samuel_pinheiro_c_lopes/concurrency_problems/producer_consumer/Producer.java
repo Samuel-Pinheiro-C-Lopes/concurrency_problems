@@ -19,7 +19,12 @@ public class Producer implements Runnable {
     private volatile boolean running = true;
     private int lastProducedValue;
 
-    public Producer(ArrayList<Integer> values, Semaphore mutex, Semaphore full, Semaphore empty) {
+    public Producer(
+    		ArrayList<Integer> values, 
+    		Semaphore mutex, 
+    		Semaphore full, 
+    		Semaphore empty
+    ) {
         this.random = new Random();
         this.mutex = mutex;
         this.full = full;
@@ -32,13 +37,18 @@ public class Producer implements Runnable {
     public void run() {
         try {
             while(this.running) {
-                this.empty.acquire();
-                this.mutex.acquire();
-                this.lastProducedValue = this.random.nextInt(10) * this.random.nextInt(10);
+                this.empty.acquire(); // only when the buffer is not full
+                this.mutex.acquire(); // mutual exclusion
+                
+                this.lastProducedValue = 
+                		this.random.nextInt(10) * this.random.nextInt(10);
+                
                 System.out.println("I just produced: " + this.lastProducedValue + ".");
                 this.values.add(this.lastProducedValue);
-                this.mutex.release();
-                this.full.release();
+                
+                this.mutex.release(); // exiting critical zone
+                this.full.release(); // signal for the consumers
+
                 TimeUnit.MILLISECONDS.sleep(100 + this.random.nextInt(400));
             }
         } catch (InterruptedException e) {
@@ -46,7 +56,15 @@ public class Producer implements Runnable {
         }
     }
 
+    
+    
+    
+    
     public void stop() {
         this.running = false;
     }
 }
+
+
+
+

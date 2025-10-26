@@ -20,7 +20,12 @@ public class Consumer implements Runnable {
     private volatile boolean running = true;
     private int lastConsumedValue;
 
-    public Consumer(ArrayList<Integer> values, Semaphore mutex, Semaphore full, Semaphore empty) {
+    public Consumer(
+    		ArrayList<Integer> values, 
+    		Semaphore mutex, 
+    		Semaphore full, 
+    		Semaphore empty
+    ) {
         this.consumedValues = new ArrayList<Integer>();
         this.random = new Random();
         this.mutex = mutex;
@@ -34,13 +39,17 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while(this.running) {
-                this.full.acquire();
-                this.mutex.acquire();
+                this.full.acquire(); // only when the buffer is not empty
+                this.mutex.acquire(); // mutual exclusion
+                
                 this.lastConsumedValue = this.values.remove(this.values.size() - 1);
+                
                 System.out.println("I just consumed: " + this.lastConsumedValue + ".");
                 this.consumedValues.add(this.lastConsumedValue);
-                this.mutex.release();
-                this.empty.release();
+                
+                this.mutex.release(); // exiting critical zone
+                this.empty.release(); // signal for the producers
+                
                 TimeUnit.MILLISECONDS.sleep(100 + this.random.nextInt(400));
             }
         } catch (InterruptedException e) {
@@ -48,7 +57,14 @@ public class Consumer implements Runnable {
         }
     }
 
+    
+    
+    
+    
     public void stop() {
         this.running = false;
     }
 }
+
+
+

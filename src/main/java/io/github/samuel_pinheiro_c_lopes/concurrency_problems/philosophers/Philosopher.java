@@ -9,16 +9,14 @@ import java.util.concurrent.TimeUnit;
 
 public class Philosopher implements Runnable {
     private int id;
-    private Semaphore mutex;
     private Semaphore[] forks;
     private Semaphore seats;
     private volatile boolean running = true;
     private Random random;
 
-    public Philosopher(int id, Semaphore mutex, Semaphore[] forks, Semaphore seats) {
+    public Philosopher(int id, Semaphore[] forks, Semaphore seats) {
         this.random = new Random();
         this.id = id;
-        this.mutex = mutex;
         this.forks = forks;
         this.seats = seats;
     }

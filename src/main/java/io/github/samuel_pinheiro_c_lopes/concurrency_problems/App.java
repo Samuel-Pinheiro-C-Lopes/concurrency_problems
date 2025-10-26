@@ -88,18 +88,19 @@ public class App {
     }
 
     protected static void testPhilosophers() {
-        DinnerTable table = new DinnerTable(App.seatsSize);
+        DinnerTable table = new DinnerTable(App.seatsSize /*4*/);
         // philosophers
-        Philosopher p1 = new Philosopher(0, table.mutex, table.forks, table.seats);
-        Philosopher p2 = new Philosopher(1, table.mutex, table.forks, table.seats);
-        Philosopher p3 = new Philosopher(2, table.mutex, table.forks, table.seats);
-        Philosopher p4 = new Philosopher(3, table.mutex, table.forks, table.seats);
-        Philosopher p5 = new Philosopher(4, table.mutex, table.forks, table.seats);
+        Philosopher p1 = new Philosopher(0, table.forks, table.seats);
+        Philosopher p2 = new Philosopher(1, table.forks, table.seats);
+        Philosopher p3 = new Philosopher(2, table.forks, table.seats);
+        Philosopher p4 = new Philosopher(3, table.forks, table.seats);
+        Philosopher p5 = new Philosopher(4, table.forks, table.seats);
         Thread p1Thread = new Thread(p1);
         Thread p2Thread = new Thread(p2);
         Thread p3Thread = new Thread(p3);
         Thread p4Thread = new Thread(p4);
         Thread p5Thread = new Thread(p5);
+        
         try {
             // start philosophers
             p1Thread.start();
@@ -126,14 +127,15 @@ public class App {
     }
 
     protected static void testProducerConsumer() {
+    	
         // buffer
         Buffer buffer = new Buffer(App.bufferSize);
-        // Thread bufferThread = new Thread(buffer);
         // producers
         Producer p1 = new Producer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
         Producer p2 = new Producer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
         Producer p3 = new Producer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
         Producer p4 = new Producer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
+        
         Thread p1Thread = new Thread(p1);
         Thread p2Thread = new Thread(p2);
         Thread p3Thread = new Thread(p3);
@@ -143,42 +145,31 @@ public class App {
         Consumer c2 = new Consumer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
         Consumer c3 = new Consumer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
         Consumer c4 = new Consumer(buffer.values, buffer.mutex, buffer.full, buffer.empty);
+        
         Thread c1Thread = new Thread(c1);
         Thread c2Thread = new Thread(c2);
         Thread c3Thread = new Thread(c3);
         Thread c4Thread = new Thread(c4);
+        
         try {
             // start producers
-            p1Thread.start();
-            p2Thread.start();
-            p3Thread.start();
-            p4Thread.start();
+            p1Thread.start(); p2Thread.start(); p3Thread.start(); p4Thread.start();
+            
             // start consumers
-            c1Thread.start();
-            c2Thread.start();
-            c3Thread.start();
-            c4Thread.start();
+            c1Thread.start(); c2Thread.start(); c3Thread.start(); c4Thread.start();
+            
             TimeUnit.SECONDS.sleep(App.timeRunning); // running for 10 seconds
             // stop producers
-            p1.stop();
-            p2.stop();
-            p3.stop();
-            p4.stop();
-            // stop consumers
-            c1.stop();
-            c2.stop();
-            c3.stop();
-            c4.stop();
+            p1.stop(); p2.stop(); p3.stop(); p4.stop();
+            
+            // stop consumers 
+            c1.stop(); c2.stop(); c3.stop(); c4.stop();
+
             // wait for producers to finish
-            p1Thread.join();
-            p2Thread.join();
-            p3Thread.join();
-            p4Thread.join();
+            p1Thread.join(); p2Thread.join(); p3Thread.join(); p4Thread.join();
+            
             // wait for consumers to finish
-            c1Thread.join();
-            c2Thread.join();
-            c3Thread.join();
-            c4Thread.join();
+            c1Thread.join(); c2Thread.join(); c3Thread.join(); c4Thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
